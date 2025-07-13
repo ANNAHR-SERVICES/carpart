@@ -25,17 +25,58 @@ A modular and scalable full-stack web platform for managing auto parts, built wi
 
 ---
 
-## 📁 Project Structure
+## 🔧 Project Root Structure
 
 ```bash
-/autoparts-platform
-├── /client        # React frontend
-│   └── /src/pages/auth/SignIn.jsx
-│   └── /src/pages/auth/SignUp.jsx
-├── /server        # Express backend
-│   └── /routes/authRoutes.js
-│   └── /controllers/authController.js
-│   └── /middlewares/roleMiddleware.js
-│   └── /models/User.js
-├── .env.example
-├── README.md
+carpart/
+├── client/                 # React Frontend
+├── server/                 # Node.js + Express Backend
+├── .gitignore
+└── README.md
+```
+
+
+## 📁 Client Structure (/client)
+This is your React app folder.
+
+```bash
+client/
+├── public/
+│   └── index.html
+├── src/
+│   ├── assets/             # Images, styles, etc.
+│   ├── components/         # Reusable UI components
+│   ├── pages/              # Route-based components (e.g., Home, Login)
+│   ├── routes/             # React Router config
+│   ├── services/           # API calls (axios/fetch)
+│   ├── App.js
+│   ├── index.js
+│   └── styles/             # Global styles (optional)
+├── .env                    # React env variables
+├── package.json
+└── README.md
+```
+
+
+## 📁 Server Structure (/server)
+This is your Express.js backend with MongoDB (via Mongoose).
+
+```bash
+server/
+├── config/
+│   └── db.js               # MongoDB connection
+├── controllers/            # Logic for routes
+│   └── userController.js
+├── middleware/             # Auth, error handling, etc.
+│   ├── authMiddleware.js
+│   └── errorMiddleware.js
+├── models/                 # Mongoose schemas
+│   └── User.js
+├── routes/                 # Express routes
+│   └── userRoutes.js
+├── utils/                  # Helper functions
+├── .env                    # Server environment variables
+├── server.js               # Entry point
+├── package.json
+└── README.md
+```
