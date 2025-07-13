@@ -46,12 +46,15 @@ client/
 ├── src/
 │   ├── assets/             # Images, styles, etc.
 │   ├── components/         # Reusable UI components
+│   ├── context/            
 │   ├── pages/              # Route-based components (e.g., Home, Login)
 │   ├── routes/             # React Router config
 │   ├── services/           # API calls (axios/fetch)
 │   ├── App.js
 │   ├── index.js
 │   └── styles/             # Global styles (optional)
+│       └── app.css
+│       └── index.css
 ├── .env                    # React env variables
 ├── package.json
 └── README.md
