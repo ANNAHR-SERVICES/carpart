@@ -1,0 +1,5 @@
+SuperAdmin:
+admin@yourdomain.com   SuperPass123
+
+BD:
+mongodb+srv://Adam:Adam123@autosparepartsplatform.rvlewlb.mongodb.net/?retryWrites=true&w=majority&appName=AutoSparePartsPlatform
