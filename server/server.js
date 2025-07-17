@@ -5,6 +5,7 @@ const dotenv = require('dotenv');
 // Import controllers et middlewares nécessaires
 const authController = require('./controllers/authController');
 const { authenticateJWT, requireSuperadmin, authorizeRoles } = require('./middleware/auth');
+const acheteurRoutes = require('./routes/acheteur');
 
 // Load environment variables
 dotenv.config();
@@ -50,6 +51,8 @@ app.get('/api/protected/admin', authenticateJWT, authorizeRoles('admin', 'supera
 app.get('/', (req, res) => {
   res.json({ message: 'Auto Spare Parts Platform API' });
 });
+
+app.use('/acheteur', acheteurRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
