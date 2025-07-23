@@ -1,5 +1,6 @@
 SuperAdmin:
-admin@yourdomain.com   SuperPass123
+bayfiras@nmtc.tn   supersecret123
 
 BD:
-mongodb+srv://Adam:Adam123@autosparepartsplatform.rvlewlb.mongodb.net/?retryWrites=true&w=majority&appName=AutoSparePartsPlatform
+
+mongodb+srv://bayfiras:bayfiras150302@carpart.c1hq0el.mongodb.net/

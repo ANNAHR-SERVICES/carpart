@@ -17,7 +17,7 @@ app.use(cors());
 app.use(express.json());
 
 // MongoDB Connection
-const MONGODB_URI = 'mongodb+srv://Adam:Adam123@autosparepartsplatform.rvlewlb.mongodb.net/?retryWrites=true&w=majority&appName=AutoSparePartsPlatform';
+const MONGODB_URI = 'mongodb+srv://bayfiras:bayfiras150302@carpart.c1hq0el.mongodb.net/';
 
 mongoose.connect(MONGODB_URI, {
   useNewUrlParser: true,
