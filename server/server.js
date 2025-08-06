@@ -24,14 +24,14 @@ mongoose.connect(process.env.MONGO_URI, {
 });
 
 // ===== ROUTES =====
-const authRoutes = require('./routes/auth'); // Route de login (JWT)
-const vendeurRoutes = require('./routes/vendeur'); // Tes routes vendeur si tu en as
-const acheteurRoutes = require('./routes/acheteur'); // Tes routes acheteur si tu en as
+const authRoutes = require('./routes/auth');
+const vendeurRoutes = require('./routes/vendeur');
+const acheteurRoutes = require('./routes/acheteur');
 
 // Branche les routes
-app.use('/', authRoutes); // /login sera disponible à la racine
-app.use('/vendeur', vendeurRoutes);
-app.use('/acheteur', acheteurRoutes);
+app.use('/api/auth', authRoutes); // Auth routes with /api/auth prefix
+app.use('/api/vendeur', vendeurRoutes);
+app.use('/api/acheteur', acheteurRoutes);
 
 // Route de test (optionnelle)
 app.get('/', (req, res) => {
