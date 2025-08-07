@@ -90,9 +90,9 @@ const ProductSearch = () => {
 
   // Formater le prix
   const formatPrice = (price) => {
-    return new Intl.NumberFormat('fr-FR', {
+    return new Intl.NumberFormat('ar-TN', {
       style: 'currency',
-      currency: 'EUR'
+      currency: 'TND'
     }).format(price);
   };
 
@@ -172,7 +172,7 @@ const ProductSearch = () => {
 
           {/* Prix minimum */}
           <div className="filter-group">
-            <label>Prix minimum (€)</label>
+            <label>Prix minimum (TND)</label>
             <input
               type="number"
               placeholder="0"
@@ -184,7 +184,7 @@ const ProductSearch = () => {
 
           {/* Prix maximum */}
           <div className="filter-group">
-            <label>Prix maximum (€)</label>
+            <label>Prix maximum (TND)</label>
             <input
               type="number"
               placeholder="1000"
