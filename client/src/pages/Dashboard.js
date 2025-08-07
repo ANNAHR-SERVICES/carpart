@@ -2,10 +2,16 @@ import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { authAPI } from '../services/api';
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 import './Dashboard.css';
 
 const ClientDashboard = () => {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleBrowseParts = () => {
+    navigate('/products');
+  };
 
   return (
     <div className="dashboard">
@@ -21,7 +27,7 @@ const ClientDashboard = () => {
           <h2>My Orders</h2>
           <p>View and track your spare parts orders</p>
         </div>
-        <div className="dashboard-card">
+        <div className="dashboard-card clickable" onClick={handleBrowseParts}>
           <h2>Browse Parts</h2>
           <p>Search for auto spare parts</p>
         </div>

@@ -5,9 +5,11 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import SignIn from './components/SignIn';
 import SignUp from './components/SignUp';
 import { ClientDashboard, VendeurDashboard, AdminDashboard, ModerateurDashboard, SuperadminDashboard } from './pages/Dashboard';
+import ProductSearch from './components/ProductSearch';
 import './App.css';
 
-// Protected Route Component
+// Protected Route Component (unused but kept for future use)
+// eslint-disable-next-line no-unused-vars
 const ProtectedRoute = ({ children, allowedRoles = [] }) => {
   const { user, loading } = useAuth();
 
@@ -89,6 +91,7 @@ const AppRoutes = () => {
       />
       
       <Route path="/unauthorized" element={<div className="unauthorized">Access Denied</div>} />
+      <Route path="/products" element={<ProductSearch />} />
       <Route path="/" element={<Navigate to="/signin" replace />} />
     </Routes>
   );
