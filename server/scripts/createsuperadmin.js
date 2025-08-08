@@ -1,36 +1,48 @@
-// scripts/createSuperadmin.js
 const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
 const User = require('../models/User');
 
-const MONGODB_URI = 'mongodb+srv://bayfiras:bayfiras150302@carpart.c1hq0el.mongodb.net/';
+const MONGODB_URI = 'mongodb+srv://Adam:Adam123@autosparepartsplatform.rvlewlb.mongodb.net/?retryWrites=true&w=majority&appName=AutoSparePartsPlatform';
 
-mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(async () => {
-    console.log('Connected to MongoDB');
+const superadminUser = {
+  name: 'Super Admin',
+  email: 'superadmin@test.com',
+  password: 'password123',
+  role: 'superadmin'
+};
 
-    const email = 'bayfiras@nmtc.tn';
-    const password = 'supersecret123';
+async function createSuperadmin() {
+  try {
+    await mongoose.connect(MONGODB_URI);
+    console.log('✅ Connected to MongoDB');
 
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      console.log('Superadmin user already exists');
-      process.exit(0);
+    // Check if superadmin already exists
+    const existingSuperadmin = await User.findOne({ email: superadminUser.email });
+    if (existingSuperadmin) {
+      console.log('⚠️  Superadmin already exists with email:', superadminUser.email);
+      console.log('   You can use these credentials to test:');
+      console.log('   Email: superadmin@test.com');
+      console.log('   Password: password123');
+      return;
     }
 
-    const user = new User({
-      name: 'Super Admin',
-      email,
-      password, // <-- plain text here, hashing happens in pre-save
-      role: 'superadmin'
-    });
+    // Create superadmin user
+    const superadmin = await User.create(superadminUser);
+    
+    console.log('✅ Superadmin created successfully:');
+    console.log(`   - Name: ${superadmin.name}`);
+    console.log(`   - Email: ${superadmin.email}`);
+    console.log(`   - Role: ${superadmin.role}`);
 
-    await user.save();  // triggers password hashing hook
+    console.log('\n🎯 You can now test the superadmin dashboard with these credentials:');
+    console.log('   Email: superadmin@test.com');
+    console.log('   Password: password123');
 
-    console.log('Superadmin user created successfully');
-    process.exit(0);
-  })
-  .catch(err => {
-    console.error('Error:', err);
-    process.exit(1);
-  });
+  } catch (error) {
+    console.error('❌ Error creating superadmin:', error);
+  } finally {
+    await mongoose.disconnect();
+    console.log('🔌 Disconnected from MongoDB');
+  }
+}
+
+createSuperadmin(); 

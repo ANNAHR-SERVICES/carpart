@@ -42,4 +42,36 @@ export const authAPI = {
   createUser: (userData) => api.post('/auth/create-user', userData),
 };
 
+export const productAPI = {
+  // Obtenir tous les produits
+  getAllProducts: (params = {}) => api.get('/products', { params }),
+  
+  // Obtenir un produit par ID
+  getProductById: (id) => api.get(`/products/${id}`),
+  
+  // Créer un nouveau produit (avec images)
+  createProduct: (formData) => {
+    return api.post('/products', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+  },
+  
+  // Mettre à jour un produit
+  updateProduct: (id, formData) => {
+    return api.put(`/products/${id}`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+  },
+  
+  // Supprimer un produit
+  deleteProduct: (id) => api.delete(`/products/${id}`),
+  
+  // Obtenir les produits du vendeur connecté
+  getSellerProducts: () => api.get('/products/seller/my-products'),
+};
+
 export default api; 

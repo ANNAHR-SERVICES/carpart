@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { authAPI } from '../services/api';
 import toast from 'react-hot-toast';
+import ProductManagement from './ProductManagement';
+import VendorDashboard from '../components/VendorDashboard';
 import './Dashboard.css';
 
 const ClientDashboard = () => {
@@ -36,6 +38,47 @@ const ClientDashboard = () => {
 
 const VendeurDashboard = () => {
   const { user, logout } = useAuth();
+  const [currentView, setCurrentView] = useState('dashboard'); // 'dashboard' or 'products' or 'vendor-dashboard'
+
+  if (currentView === 'products') {
+    return (
+      <div className="dashboard">
+        <div className="dashboard-header">
+          <button 
+            onClick={() => setCurrentView('dashboard')}
+            className="back-btn"
+          >
+            ← Retour au Dashboard
+          </button>
+          <div className="user-info">
+            <span>Welcome, {user?.name}</span>
+            <button onClick={logout} className="logout-btn">Logout</button>
+          </div>
+        </div>
+        <ProductManagement />
+      </div>
+    );
+  }
+
+  if (currentView === 'vendor-dashboard') {
+    return (
+      <div className="dashboard">
+        <div className="dashboard-header">
+          <button 
+            onClick={() => setCurrentView('dashboard')}
+            className="back-btn"
+          >
+            ← Retour au Dashboard
+          </button>
+          <div className="user-info">
+            <span>Welcome, {user?.name}</span>
+            <button onClick={logout} className="logout-btn">Logout</button>
+          </div>
+        </div>
+        <VendorDashboard />
+      </div>
+    );
+  }
 
   return (
     <div className="dashboard">
@@ -47,17 +90,23 @@ const VendeurDashboard = () => {
         </div>
       </div>
       <div className="dashboard-content">
-        <div className="dashboard-card">
-          <h2>My Products</h2>
-          <p>Manage your spare parts inventory</p>
+        <div className="dashboard-card" onClick={() => setCurrentView('vendor-dashboard')}>
+          <h2>Tableau de Bord Avancé</h2>
+          <p>Interface moderne avec tableau et statistiques</p>
+          <button className="primary-btn">Accéder</button>
+        </div>
+        <div className="dashboard-card" onClick={() => setCurrentView('products')}>
+          <h2>Gestion des Produits</h2>
+          <p>Gérer votre inventaire de pièces détachées</p>
+          <button className="primary-btn">Accéder</button>
         </div>
         <div className="dashboard-card">
-          <h2>Orders</h2>
-          <p>View and process customer orders</p>
+          <h2>Commandes</h2>
+          <p>Voir et traiter les commandes clients</p>
         </div>
         <div className="dashboard-card">
           <h2>Analytics</h2>
-          <p>View sales and performance metrics</p>
+          <p>Voir les métriques de vente et de performance</p>
         </div>
       </div>
     </div>
