@@ -45,9 +45,12 @@ router.get('/pieces', async (req, res) => {
 
     let query = { disponibilite: true };
 
-    // Recherche par nom
+    // Recherche par nom et description
     if (search) {
-      query.nom = { $regex: search, $options: 'i' };
+      query.$or = [
+        { nom: { $regex: search, $options: 'i' } },
+        { description: { $regex: search, $options: 'i' } }
+      ];
     }
 
     // Filtrage par prix
@@ -82,7 +85,7 @@ router.get('/pieces', async (req, res) => {
       query.disponibilite = req.query.disponibilite === 'true';
     }
 
-    // Tri
+    // Tri avec options avancées
     let sortOption = { dateAjout: -1 }; // Par défaut, tri par date décroissante
     if (req.query.tri) {
       switch (req.query.tri) {
@@ -93,9 +96,17 @@ router.get('/pieces', async (req, res) => {
           sortOption = { prix: -1 };
           break;
         case 'nom_asc':
-          sortOption = { nom: 1 };
+          sortOption = { nom: 1 }; // Tri alphabétique croissant (ignore majuscules/minuscules)
           break;
         case 'nom_desc':
+          sortOption = { nom: -1 }; // Tri alphabétique décroissant (ignore majuscules/minuscules)
+          break;
+        case 'nom_asc_strict':
+          // Tri alphabétique strict avec contrôle total
+          sortOption = { nom: 1 };
+          break;
+        case 'nom_desc_strict':
+          // Tri alphabétique strict inverse avec contrôle total
           sortOption = { nom: -1 };
           break;
         case 'date_asc':
@@ -104,13 +115,63 @@ router.get('/pieces', async (req, res) => {
         case 'date_desc':
           sortOption = { dateAjout: -1 };
           break;
+        case 'marque_asc':
+          sortOption = { marque: 1 }; // Tri par marque alphabétique
+          break;
+        case 'marque_desc':
+          sortOption = { marque: -1 }; // Tri par marque alphabétique inverse
+          break;
+        case 'categorie_asc':
+          sortOption = { categorie: 1 }; // Tri par catégorie alphabétique
+          break;
+        case 'categorie_desc':
+          sortOption = { categorie: -1 }; // Tri par catégorie alphabétique inverse
+          break;
       }
     }
 
-    const pieces = await Piece.find(query)
-      .skip(skip)
-      .limit(parseInt(limit))
-      .sort(sortOption);
+    // Vérifier si on utilise un tri strict
+    const useStrictSort = req.query.tri && req.query.tri.includes('strict');
+    
+    let pieces;
+    if (useStrictSort) {
+      // Utiliser l'agrégation pour un tri alphabétique strict
+      const pipeline = [
+        { $match: query },
+        {
+          $addFields: {
+            nomLower: { $toLower: "$nom" }  // Convertir en minuscules pour le tri
+          }
+        },
+        { 
+          $sort: { 
+            nomLower: req.query.tri === 'nom_asc_strict' ? 1 : -1 
+          } 
+        },
+        { $skip: skip },
+        { $limit: parseInt(limit) }
+      ];
+      
+      pieces = await Piece.aggregate(pipeline);
+    } else {
+      // Configuration du tri normal avec collation
+      let findOptions = {
+        skip: skip,
+        limit: parseInt(limit),
+        sort: sortOption
+      };
+
+      // Ajouter la collation pour ignorer majuscules/minuscules sur tous les tris alphabétiques
+      if (req.query.tri && (req.query.tri.includes('nom') || req.query.tri.includes('marque') || req.query.tri.includes('categorie'))) {
+        findOptions.collation = { 
+          locale: 'fr', 
+          strength: 2,  // strength: 2 ignore la casse
+          numericOrdering: true  // Assure l'ordre numérique correct
+        };
+      }
+
+      pieces = await Piece.find(query, null, findOptions);
+    }
 
     const total = await Piece.countDocuments(query);
 
