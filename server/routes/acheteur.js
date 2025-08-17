@@ -1,9 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const { reserverPiece } = require('../controllers/acheteurController');
+const { reserverPiece, validateQRCode } = require('../controllers/acheteurController');
 const { authenticateJWT } = require('../middleware/auth');
-const role = require('../middleware/role');
 
-router.post('/reserver', authenticateJWT, role('acheteur'), reserverPiece);
+router.post('/reserverPiece', authenticateJWT, reserverPiece);
 
-module.exports = router; 
+// Nouvelle route pour validation QR code
+router.post('/validateQRCode', authenticateJWT, validateQRCode);
+
+module.exports = router;
