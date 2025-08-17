@@ -99,6 +99,40 @@
   margin: 0;
 }
 
+/* Style pour les cartes cliquables */
+.dashboard-card.clickable {
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.dashboard-card.clickable::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 1;
+}
+
+.dashboard-card.clickable:hover::before {
+  opacity: 0.05;
+}
+
+.dashboard-card.clickable h2,
+.dashboard-card.clickable p {
+  position: relative;
+  z-index: 2;
+}
+
+.dashboard-card.clickable:hover h2 {
+  color: #667eea;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .dashboard-header {

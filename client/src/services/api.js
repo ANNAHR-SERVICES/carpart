@@ -74,4 +74,27 @@ export const productAPI = {
   getSellerProducts: () => api.get('/products/seller/my-products'),
 };
 
+export const productsAPI = {
+  // Récupérer tous les produits avec filtres
+  getProducts: (params = {}) => api.get('/vendeur/pieces', { params }),
+  
+  // Récupérer un produit spécifique
+  getProduct: (id) => api.get(`/vendeur/pieces/${id}`),
+  
+  // Créer un nouveau produit
+  createProduct: (productData) => api.post('/vendeur/pieces', productData),
+  
+  // Modifier un produit
+  updateProduct: (id, productData) => api.put(`/vendeur/pieces/${id}`, productData),
+  
+  // Supprimer un produit
+  deleteProduct: (id) => api.delete(`/vendeur/pieces/${id}`),
+  
+  // Rechercher des produits
+  searchProducts: (query) => api.get(`/vendeur/pieces/search/${query}`),
+  
+  // Produits par catégorie
+  getProductsByCategory: (category) => api.get(`/vendeur/pieces/categorie/${category}`),
+};
+
 export default api; 

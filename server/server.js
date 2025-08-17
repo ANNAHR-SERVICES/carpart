@@ -1,25 +1,28 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const cors = require('cors');
 const dotenv = require('dotenv');
 const path = require('path');
+const cors = require('cors');
 const authRoutes = require('./routes/auth');
 const productRoutes = require('./routes/products');
+const vendeurRoutes = require('./routes/vendeur');
+const acheteurRoutes = require('./routes/acheteur');
 
-// Load environment variables
+// Chargement des variables d'environnement
 dotenv.config();
 
 const app = express();
+const PORT = process.env.PORT || 5000;
 
-// Middleware
-app.use(cors());
+// Middlewares globaux
 app.use(express.json());
+app.use(cors());
 
 // Servir les fichiers statiques (images uploadées)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // MongoDB Connection
-const MONGODB_URI = 'mongodb+srv://Adam:Adam123@autosparepartsplatform.rvlewlb.mongodb.net/?retryWrites=true&w=majority&appName=AutoSparePartsPlatform';
+const MONGODB_URI = process.env.MONGO_URI || 'mongodb+srv://Adam:Adam123@autosparepartsplatform.rvlewlb.mongodb.net/?retryWrites=true&w=majority&appName=AutoSparePartsPlatform';
 
 mongoose.connect(MONGODB_URI, {
   useNewUrlParser: true,
@@ -28,9 +31,12 @@ mongoose.connect(MONGODB_URI, {
 .then(() => console.log('✅ Connected to MongoDB'))
 .catch(err => console.error('❌ MongoDB connection error:', err));
 
-// Routes
-app.use('/api/auth', authRoutes);
+// ===== ROUTES =====
+// Branche les routes
+app.use('/api/auth', authRoutes); // Auth routes with /api/auth prefix
 app.use('/api/products', productRoutes);
+app.use('/api/vendeur', vendeurRoutes);
+app.use('/api/acheteur', acheteurRoutes);
 
 // Example protected route (only admin or superadmin)
 const { authenticateJWT, authorizeRoles } = require('./middleware/auth');
@@ -38,13 +44,12 @@ app.get('/api/protected/admin', authenticateJWT, authorizeRoles('admin', 'supera
   res.json({ message: 'You are an admin or superadmin.' });
 });
 
-// Basic route
+// Route de test (optionnelle)
 app.get('/', (req, res) => {
-  res.json({ message: 'Auto Spare Parts Platform API' });
+  res.send('API Backend CarPart 🚗🔧');
 });
 
-const PORT = process.env.PORT || 5000;
+// Démarrage du serveur
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📡 API available at http://localhost:${PORT}`);
-}); 
+  console.log(`🚀 Serveur actif sur le port ${PORT}`);
+});
