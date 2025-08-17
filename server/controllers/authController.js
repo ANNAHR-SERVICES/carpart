@@ -15,8 +15,8 @@ exports.signUp = async (req, res) => {
       });
     }
     
-    // Ensure role is always 'client' for public signup (ignore any role provided)
-    const userRole = 'client';
+    // Allow 'client' or 'acheteur' role for public signup
+    const userRole = role === 'acheteur' ? 'acheteur' : 'client';
     
     // Validate email format
     const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;

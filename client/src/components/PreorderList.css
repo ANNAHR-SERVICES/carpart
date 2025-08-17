@@ -1,0 +1,164 @@
+.preorder-list-container {
+  padding: 20px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.preorder-list-container h2 {
+  margin-bottom: 20px;
+  color: #333;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.loading, .error, .empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: #666;
+}
+
+.loading {
+  font-size: 1.1rem;
+}
+
+.error {
+  color: #e74c3c;
+  font-weight: 500;
+}
+
+.empty-state h3 {
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.empty-state p {
+  color: #666;
+  font-size: 0.95rem;
+}
+
+.preorder-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.preorder-card {
+  border: 1px solid #e1e5e9;
+  border-radius: 8px;
+  padding: 20px;
+  background: #fff;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.preorder-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.preorder-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.preorder-id {
+  font-weight: 600;
+  color: #333;
+  font-family: 'Courier New', monospace;
+}
+
+.status {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.status.pending {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.status.accepted {
+  background: #d4edda;
+  color: #155724;
+}
+
+.status.rejected {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.status.completed {
+  background: #d1ecf1;
+  color: #0c5460;
+}
+
+.preorder-details {
+  margin-bottom: 20px;
+}
+
+.preorder-details p {
+  margin: 8px 0;
+  color: #555;
+  font-size: 0.9rem;
+}
+
+.preorder-details strong {
+  color: #333;
+  font-weight: 600;
+}
+
+.preorder-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-accept, .btn-reject {
+  flex: 1;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-accept {
+  background: #28a745;
+  color: white;
+}
+
+.btn-accept:hover {
+  background: #218838;
+}
+
+.btn-reject {
+  background: #dc3545;
+  color: white;
+}
+
+.btn-reject:hover {
+  background: #c82333;
+}
+
+@media (max-width: 768px) {
+  .preorder-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .preorder-card {
+    padding: 15px;
+  }
+  
+  .preorder-actions {
+    flex-direction: column;
+  }
+}

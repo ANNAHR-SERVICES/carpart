@@ -1,53 +1,55 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const cors = require('cors');
 const dotenv = require('dotenv');
+const path = require('path');
+const cors = require('cors');
+const authRoutes = require('./routes/auth');
+const productRoutes = require('./routes/products');
+const vendeurRoutes = require('./routes/vendeur');
+const acheteurRoutes = require('./routes/acheteur');
 
-const authController = require('./controllers/authController');
-const partsRoutes = require('./routes/car_parts');
-const { authenticateJWT, requireSuperadmin, authorizeRoles } = require('./middleware/auth');
-
+// Chargement des variables d'environnement
 dotenv.config();
 
 const app = express();
+const PORT = process.env.PORT || 5000;
 
-app.use(cors());
+// Middlewares globaux
 app.use(express.json());
+app.use(cors());
 
-const MONGODB_URI = 'mongodb+srv://bayfiras:bayfiras150302@carpart.c1hq0el.mongodb.net/carpartdb?retryWrites=true&w=majority';
+// Servir les fichiers statiques (images uploadées)
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// MongoDB Connection
+const MONGODB_URI = process.env.MONGO_URI || 'mongodb+srv://Adam:Adam123@autosparepartsplatform.rvlewlb.mongodb.net/?retryWrites=true&w=majority&appName=AutoSparePartsPlatform';
 
 mongoose.connect(MONGODB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
 })
 .then(() => console.log('✅ Connected to MongoDB'))
 .catch(err => console.error('❌ MongoDB connection error:', err));
 
-app.post('/api/auth/signup', authController.signUp);
-app.post('/api/auth/signin', authController.signIn);
+// ===== ROUTES =====
+// Branche les routes
+app.use('/api/auth', authRoutes); // Auth routes with /api/auth prefix
+app.use('/api/products', productRoutes);
+app.use('/api/vendeur', vendeurRoutes);
+app.use('/api/acheteur', acheteurRoutes);
 
-app.post('/api/auth/create-user', authenticateJWT, requireSuperadmin, authController.superadminCreateUser);
-
-app.get('/api/auth/test-auth', authenticateJWT, authController.testAuth);
-app.get('/api/auth/test-superadmin', authenticateJWT, requireSuperadmin, authController.testAuth);
-app.get('/api/auth/test-admin', authenticateJWT, authorizeRoles('admin', 'superadmin'), authController.testAuth);
-
+// Example protected route (only admin or superadmin)
+const { authenticateJWT, authorizeRoles } = require('./middleware/auth');
 app.get('/api/protected/admin', authenticateJWT, authorizeRoles('admin', 'superadmin'), (req, res) => {
-    res.json({ message: 'You are an admin or superadmin.' });
+  res.json({ message: 'You are an admin or superadmin.' });
 });
 
-app.use('/api/parts', partsRoutes);
-
+// Route de test (optionnelle)
 app.get('/', (req, res) => {
-    res.json({ message: 'Auto Spare Parts Platform API' });
+  res.send('API Backend CarPart 🚗🔧');
 });
 
-app.get('/test', (req, res) => {
-    res.json({ message: 'Hello World' });
-});
-
-const PORT = process.env.PORT || 5000;
+// Démarrage du serveur
 app.listen(PORT, () => {
-    console.log(`🚀 Server running on port ${PORT}`);
-    console.log(`📡 API available at http://localhost:${PORT}`);
+  console.log(`🚀 Serveur actif sur le port ${PORT}`);
 });
