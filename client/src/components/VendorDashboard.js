@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { productAPI } from '../services/api';
 import ProductTable from './ProductTable';
 import ProductFormModal from './ProductFormModal';
+import PreorderList from './PreorderList';
 import toast from 'react-hot-toast';
 import { formatPriceForStats } from '../utils/currency';
 import './VendorDashboard.css';
@@ -16,6 +17,8 @@ const VendorDashboard = () => {
   const [sortBy, setSortBy] = useState('createdAt');
   const [sortOrder, setSortOrder] = useState('desc');
   const [errorMsg, setErrorMsg] = useState('');
+  const [currentView, setCurrentView] = useState('products'); // 'products' ou 'preorders'
+  const [vendorId, setVendorId] = useState(null);
 
   // Charger les produits du vendeur
   const loadProducts = async () => {
@@ -39,6 +42,11 @@ const VendorDashboard = () => {
 
   useEffect(() => {
     loadProducts();
+    // Récupérer l'ID du vendeur depuis le localStorage ou le contexte
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    if (user._id) {
+      setVendorId(user._id);
+    }
   }, []);
 
   // Gérer la création/mise à jour réussie
@@ -147,13 +155,22 @@ const VendorDashboard = () => {
           <h1>Tableau de Bord Vendeur</h1>
           <p>Gérez vos produits et suivez vos performances</p>
         </div>
-        <button 
-          onClick={handleCreateProduct}
-          className="create-product-btn"
-        >
-          <span>+</span>
-          Ajouter un produit
-        </button>
+        
+        {/* Navigation entre les vues */}
+        <div className="dashboard-navigation">
+          <button 
+            className={`nav-btn ${currentView === 'products' ? 'active' : ''}`}
+            onClick={() => setCurrentView('products')}
+          >
+            📦 Mes Produits
+          </button>
+          <button 
+            className={`nav-btn ${currentView === 'preorders' ? 'active' : ''}`}
+            onClick={() => setCurrentView('preorders')}
+          >
+            📋 Précommandes
+          </button>
+        </div>
       </div>
 
       {/* Statistiques */}
@@ -238,47 +255,178 @@ const VendorDashboard = () => {
         </div>
       </div>
 
-      {/* Tableau des produits */}
-      <div className="table-container">
-        {loading ? (
-          <div className="loading-container">
-            <div className="loading-spinner"></div>
-            <p>Chargement des produits...</p>
+      {/* Vue des produits */}
+      {currentView === 'products' && (
+        <>
+          <div className="dashboard-actions">
+            <button 
+              onClick={handleCreateProduct}
+              className="create-product-btn"
+            >
+              <span>+</span>
+              Ajouter un produit
+            </button>
           </div>
-        ) : errorMsg ? (
-          <div className="error-state">
-            <div className="error-icon">❌</div>
-            <h3>Erreur lors du chargement des produits</h3>
-            <p>{errorMsg}</p>
-            <button onClick={loadProducts} className="retry-btn">Réessayer</button>
+        </>
+      )}
+
+      {/* Vue des produits */}
+      {currentView === 'products' && (
+        <>
+          {/* Statistiques */}
+          <div className="stats-grid">
+            <div className="stat-card">
+              <div className="stat-icon">📦</div>
+              <div className="stat-content">
+                <h3>{stats.total}</h3>
+                <p>Total Produits</p>
+              </div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-icon">✅</div>
+              <div className="stat-content">
+                <h3>{stats.inStock}</h3>
+                <p>En Stock</p>
+              </div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-icon">⚠️</div>
+              <div className="stat-content">
+                <h3>{stats.outOfStock}</h3>
+                <p>Rupture</p>
+              </div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-icon">💰</div>
+              <div className="stat-content">
+                <h3>{formatPriceForStats(stats.totalValue)}</h3>
+                <p>Valeur Stock</p>
+              </div>
+            </div>
           </div>
-        ) : filteredAndSortedProducts.length === 0 ? (
-          <div className="empty-state">
-            <div className="empty-icon">📦</div>
-            <h3>Aucun produit trouvé</h3>
-            <p>
-              {searchTerm || filterCategory 
-                ? 'Aucun produit ne correspond à vos critères de recherche'
-                : 'Commencez par ajouter votre premier produit'
-              }
-            </p>
-            {!searchTerm && !filterCategory && (
-              <button 
-                onClick={handleCreateProduct}
-                className="add-first-product-btn"
+        </>
+      )}
+
+      {/* Vue des précommandes */}
+      {currentView === 'preorders' && vendorId && (
+        <PreorderList vendorId={vendorId} />
+      )}
+
+      {/* Vue des précommandes - État de chargement */}
+      {currentView === 'preorders' && !vendorId && (
+        <div className="loading-container">
+          <p>Chargement des informations vendeur...</p>
+        </div>
+      )}
+
+      {/* Vue des produits - Filtres et tableau */}
+      {currentView === 'products' && (
+        <>
+          {/* Filtres et recherche */}
+          <div className="filters-section">
+            <div className="search-box">
+              <input
+                type="text"
+                placeholder="Rechercher un produit..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="search-input"
+              />
+              <span className="search-icon">🔍</span>
+            </div>
+
+            <div className="filter-controls">
+              <select
+                value={filterCategory}
+                onChange={(e) => setFilterCategory(e.target.value)}
+                className="filter-select"
               >
-                Ajouter un produit
+                <option value="">Toutes les catégories</option>
+                <option value="Engine">Moteur</option>
+                <option value="Transmission">Transmission</option>
+                <option value="Brakes">Freins</option>
+                <option value="Suspension">Suspension</option>
+                <option value="Electrical">Électrique</option>
+                <option value="Body">Carrosserie</option>
+                <option value="Interior">Intérieur</option>
+                <option value="Other">Autre</option>
+              </select>
+
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="sort-select"
+              >
+                <option value="createdAt">Date de création</option>
+                <option value="name">Nom</option>
+                <option value="price">Prix</option>
+                <option value="stock">Stock</option>
+              </select>
+
+              <button
+                onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+                className="sort-order-btn"
+              >
+                {sortOrder === 'asc' ? '↑' : '↓'}
               </button>
+            </div>
+          </div>
+
+          {/* Tableau des produits */}
+          <div className="table-container">
+            {loading ? (
+              <div className="loading-container">
+                <div className="loading-spinner"></div>
+                <p>Chargement des produits...</p>
+              </div>
+            ) : errorMsg ? (
+              <div className="error-state">
+                <div className="error-icon">❌</div>
+                <h3>Erreur lors du chargement des produits</h3>
+                <p>{errorMsg}</p>
+                <button onClick={loadProducts} className="retry-btn">Réessayer</button>
+              </div>
+            ) : filteredAndSortedProducts.length === 0 ? (
+              <div className="empty-state">
+                <div className="empty-icon">📦</div>
+                <h3>Aucun produit trouvé</h3>
+                <p>
+                  {searchTerm || filterCategory 
+                    ? 'Aucun produit ne correspond à vos critères de recherche'
+                    : 'Commencez par ajouter votre premier produit'
+                  }
+                </p>
+                {!searchTerm && !filterCategory && (
+                  <button 
+                    onClick={handleCreateProduct}
+                    className="add-first-product-btn"
+                  >
+                    Ajouter un produit
+                  </button>
+                )}
+              </div>
+            ) : (
+              <ProductTable
+                products={filteredAndSortedProducts}
+                onEdit={handleEditProduct}
+                onDelete={handleDeleteProduct}
+              />
             )}
           </div>
-        ) : (
-          <ProductTable
-            products={filteredAndSortedProducts}
-            onEdit={handleEditProduct}
-            onDelete={handleDeleteProduct}
-          />
-        )}
-      </div>
+        </>
+      )}
+
+      {/* Vue des précommandes */}
+      {currentView === 'preorders' && vendorId && (
+        <PreorderList vendorId={vendorId} />
+      )}
+
+      {/* Vue des précommandes - État de chargement */}
+      {currentView === 'preorders' && !vendorId && (
+        <div className="loading-container">
+          <p>Chargement des informations vendeur...</p>
+        </div>
+      )}
 
       {/* Modal du formulaire */}
       {showModal && (
