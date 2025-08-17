@@ -185,61 +185,7 @@ const VendorDashboard = () => {
               Ajouter un produit
             </button>
           </div>
-        </>
-      )}
 
-      {/* Vue des produits */}
-      {currentView === 'products' && (
-        <>
-          {/* Statistiques */}
-          <div className="stats-grid">
-            <div className="stat-card">
-              <div className="stat-icon">📦</div>
-              <div className="stat-content">
-                <h3>{stats.total}</h3>
-                <p>Total Produits</p>
-              </div>
-            </div>
-            <div className="stat-card">
-              <div className="stat-icon">✅</div>
-              <div className="stat-content">
-                <h3>{stats.inStock}</h3>
-                <p>En Stock</p>
-              </div>
-            </div>
-            <div className="stat-card">
-              <div className="stat-icon">⚠️</div>
-              <div className="stat-content">
-                <h3>{stats.outOfStock}</h3>
-                <p>Rupture</p>
-              </div>
-            </div>
-            <div className="stat-card">
-              <div className="stat-icon">💰</div>
-              <div className="stat-content">
-                <h3>{formatPriceForStats(stats.totalValue)}</h3>
-                <p>Valeur Stock</p>
-              </div>
-            </div>
-          </div>
-        </>
-      )}
-
-      {/* Vue des précommandes */}
-      {currentView === 'preorders' && vendorId && (
-        <PreorderList vendorId={vendorId} />
-      )}
-
-      {/* Vue des précommandes - État de chargement */}
-      {currentView === 'preorders' && !vendorId && (
-        <div className="loading-container">
-          <p>Chargement des informations vendeur...</p>
-        </div>
-      )}
-
-      {/* Vue des produits - Filtres et tableau */}
-      {currentView === 'products' && (
-        <>
           {/* Filtres et recherche */}
           <div className="filters-section">
             <div className="search-box">
@@ -332,6 +278,18 @@ const VendorDashboard = () => {
             )}
           </div>
         </>
+      )}
+
+      {/* Vue des précommandes */}
+      {currentView === 'preorders' && vendorId && (
+        <PreorderList vendorId={vendorId} />
+      )}
+
+      {/* Vue des précommandes - État de chargement */}
+      {currentView === 'preorders' && !vendorId && (
+        <div className="loading-container">
+          <p>Chargement des informations vendeur...</p>
+        </div>
       )}
 
       {/* Modal du formulaire */}
