@@ -4,7 +4,6 @@ const { validationResult } = require('express-validator');
 // Créer un nouveau produit avec images
 const createProduct = async (req, res) => {
   try {
-    // Vérifier les erreurs de validation
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({
@@ -14,7 +13,6 @@ const createProduct = async (req, res) => {
       });
     }
 
-    // Extraire les données du produit
     const {
       name,
       description,
@@ -27,7 +25,6 @@ const createProduct = async (req, res) => {
       stock
     } = req.body;
 
-    // Créer le nouveau produit
     const product = new Product({
       name,
       description,
@@ -38,11 +35,10 @@ const createProduct = async (req, res) => {
       year: parseInt(year),
       condition,
       stock: parseInt(stock),
-      images: req.body.images, // URLs des images uploadées
-      seller: req.user.userId // ID de l'utilisateur connecté
+      images: req.body.images,
+      seller: req.user.userId
     });
 
-    // Sauvegarder le produit
     const savedProduct = await product.save();
 
     res.status(201).json({
@@ -64,19 +60,14 @@ const createProduct = async (req, res) => {
 const getAllProducts = async (req, res) => {
   try {
     const { page = 1, limit = 10, category, brand, search } = req.query;
-    
-    // Construire le filtre
+
     const filter = { isActive: true };
-    
     if (category) filter.category = category;
     if (brand) filter.brand = brand;
-    if (search) {
-      filter.$text = { $search: search };
-    }
+    if (search) filter.$text = { $search: search };
 
-    // Pagination
     const skip = (parseInt(page) - 1) * parseInt(limit);
-    
+
     const products = await Product.find(filter)
       .populate('seller', 'name email')
       .sort({ createdAt: -1 })
@@ -144,7 +135,6 @@ const updateProduct = async (req, res) => {
       });
     }
 
-    // Vérifier que l'utilisateur est le propriétaire du produit
     if (product.seller.toString() !== req.user.userId) {
       return res.status(403).json({
         success: false,
@@ -152,10 +142,8 @@ const updateProduct = async (req, res) => {
       });
     }
 
-    // Mettre à jour les champs
     const updateFields = { ...req.body };
-    
-    // Si de nouvelles images sont uploadées, les ajouter
+
     if (req.body.images && req.body.images.length > 0) {
       updateFields.images = req.body.images;
     }
@@ -193,7 +181,6 @@ const deleteProduct = async (req, res) => {
       });
     }
 
-    // Vérifier que l'utilisateur est le propriétaire du produit
     if (product.seller.toString() !== req.user.userId) {
       return res.status(403).json({
         success: false,
@@ -201,7 +188,6 @@ const deleteProduct = async (req, res) => {
       });
     }
 
-    // Soft delete
     product.isActive = false;
     await product.save();
 
@@ -222,9 +208,7 @@ const deleteProduct = async (req, res) => {
 // Obtenir les produits d'un vendeur
 const getSellerProducts = async (req, res) => {
   try {
-    console.log('[getSellerProducts] user:', req.user);
     if (!req.user || !req.user.userId) {
-      console.error('[getSellerProducts] Pas d\'utilisateur authentifié');
       return res.status(401).json({
         success: false,
         message: 'Utilisateur non authentifié'
@@ -241,11 +225,31 @@ const getSellerProducts = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('[getSellerProducts] Erreur lors de la récupération des produits du vendeur:', error);
+    console.error('Erreur lors de la récupération des produits du vendeur:', error);
     res.status(500).json({
       success: false,
       message: 'Erreur serveur lors de la récupération des produits',
       error: error.message
+    });
+  }
+};
+
+// Obtenir les produits les plus vendus (Popular Products)
+const getPopularProducts = async (req, res) => {
+  try {
+    const popularProducts = await Product.find({ isActive: true })
+      .sort({ soldCount: -1 })
+      .limit(10);
+
+    res.json({
+      success: true,
+      data: popularProducts
+    });
+  } catch (error) {
+    console.error('Erreur lors de la récupération des produits populaires:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur serveur lors de la récupération des produits populaires'
     });
   }
 };
@@ -256,5 +260,6 @@ module.exports = {
   getProductById,
   updateProduct,
   deleteProduct,
-  getSellerProducts
-}; 
+  getSellerProducts,
+  getPopularProducts
+};

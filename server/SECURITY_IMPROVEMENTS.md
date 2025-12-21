@@ -16,7 +16,7 @@ This document outlines the security improvements made to the MERN stack authenti
 - **Protected Routes**: `/create-user` - only accessible to superadmin users
 - **Test Routes**: Added for debugging and verification
 
-### 3. Enhanced Controllers (`controllers/authController.js`)
+### 3. Enhanced Controllers (`controllers/ontroller.js`)
 - **Public Signup**: Always creates users with 'client' role (ignores any role provided)
 - **Superadmin User Creation**: Only superadmin can create users with special roles
 - **Input Validation**: Comprehensive validation for all inputs

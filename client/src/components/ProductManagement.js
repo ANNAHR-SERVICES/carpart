@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { productAPI } from '../services/api';
-import ProductForm from '../components/ProductForm';
+import ProductForm from './ProductForm';
 import toast from 'react-hot-toast';
 import { formatPrice } from '../utils/currency';
 import './ProductManagement.css';
@@ -9,9 +9,8 @@ const ProductManagement = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingProduct, setEditingProduct] = useState(null);
-  const [currentView, setCurrentView] = useState('list'); // 'list' or 'form'
+  const [currentView, setCurrentView] = useState('list');
 
-  // Charger les produits du vendeur
   const loadProducts = async () => {
     try {
       setLoading(true);
@@ -29,22 +28,18 @@ const ProductManagement = () => {
     loadProducts();
   }, []);
 
-  // Gérer la création/mise à jour réussie
   const handleProductSuccess = (product) => {
     if (editingProduct) {
-      // Mise à jour
-      setProducts(prev => 
+      setProducts(prev =>
         prev.map(p => p._id === product._id ? product : p)
       );
       setEditingProduct(null);
     } else {
-      // Création
       setProducts(prev => [product, ...prev]);
     }
     setCurrentView('list');
   };
 
-  // Supprimer un produit
   const handleDeleteProduct = async (productId) => {
     if (!window.confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')) {
       return;
@@ -60,39 +55,35 @@ const ProductManagement = () => {
     }
   };
 
-  // Éditer un produit
   const handleEditProduct = (product) => {
     setEditingProduct(product);
     setCurrentView('form');
   };
 
-  // Annuler l'édition
   const handleCancelEdit = () => {
     setEditingProduct(null);
     setCurrentView('list');
   };
 
-  // Obtenir l'icône de catégorie
   const getCategoryIcon = (category) => {
     const icons = {
-      'Engine': '🔧',
-      'Transmission': '⚙️',
-      'Brakes': '🛑',
-      'Suspension': '🔄',
-      'Electrical': '⚡',
-      'Body': '🚗',
-      'Interior': '💺',
-      'Other': '📦'
+      Engine: '🔧',
+      Transmission: '⚙️',
+      Brakes: '🛑',
+      Suspension: '🔄',
+      Electrical: '⚡',
+      Body: '🚗',
+      Interior: '💺',
+      Other: '📦'
     };
     return icons[category] || '📦';
   };
 
-  // Obtenir la couleur de condition
   const getConditionColor = (condition) => {
     const colors = {
-      'New': '#28a745',
-      'Used': '#ffc107',
-      'Refurbished': '#17a2b8'
+      New: '#28a745',
+      Used: '#ffc107',
+      Refurbished: '#17a2b8'
     };
     return colors[condition] || '#6c757d';
   };
@@ -101,15 +92,12 @@ const ProductManagement = () => {
     return (
       <div className="product-management">
         <div className="page-header">
-          <button 
-            onClick={handleCancelEdit}
-            className="back-btn"
-          >
+          <button onClick={handleCancelEdit} className="back-btn">
             ← Retour à la liste
           </button>
           <h1>{editingProduct ? 'Modifier le produit' : 'Ajouter un produit'}</h1>
         </div>
-        
+
         <ProductForm
           onSuccess={handleProductSuccess}
           initialData={editingProduct}
@@ -123,7 +111,7 @@ const ProductManagement = () => {
     <div className="product-management">
       <div className="page-header">
         <h1>Gestion des produits</h1>
-        <button 
+        <button
           onClick={() => setCurrentView('form')}
           className="add-product-btn"
         >
@@ -141,7 +129,7 @@ const ProductManagement = () => {
           <div className="empty-icon">📦</div>
           <h3>Aucun produit trouvé</h3>
           <p>Commencez par ajouter votre premier produit</p>
-          <button 
+          <button
             onClick={() => setCurrentView('form')}
             className="add-first-product-btn"
           >
@@ -154,11 +142,12 @@ const ProductManagement = () => {
             <div key={product._id} className="product-card">
               <div className="product-image">
                 {product.images && product.images.length > 0 ? (
-                  <img 
-                    src={product.images[0]} 
+                  <img
+                    src={product.images[0]}
                     alt={product.name}
                     onError={(e) => {
-                      e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjVGNUY1Ii8+CjxwYXRoIGQ9Ik04MCAxMDBDODAgODkuNTQ0NyA4OC4wMDAxIDgxIDEwMCA4MUMxMTEuMDQ2IDgxIDExOSA4OS41NDQ3IDExOSAxMDBDMTE5IDExMC40NTUgMTExLjA0NiAxMTkgMTAwIDExOUM4OC4wMDAxIDExOSA4MCAxMTAuNDU1IDgwIDEwMFoiIGZpbGw9IiNDQ0NDQ0MiLz4KPHBhdGggZD0iTTEwMCAxMjVDMTEwLjQ1NSAxMjUgMTE5IDExNi40NTUgMTE5IDEwNkMxMTkgOTUuNTQ0NyAxMTAuNDU1IDg3IDEwMCA4N0M4OS41NDQ3IDg3IDgxIDk1LjU0NDcgODEgMTA2QzgxIDExNi40NTUgODkuNTQ0NyAxMjUgMTAwIDEyNVoiIGZpbGw9IiNGRkZGRkYiLz4KPC9zdmc+';
+                      e.target.src =
+                        'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjVGNUY1Ii8+CjxwYXRoIGQ9Ik04MCAxMDBDODAgODkuNTQ0NyA4OC4wMDAxIDgxIDEwMCA4MUMxMTEuMDQ2IDgxIDExOSA4OS41NDQ3IDExOSAxMDBDMTE5IDExMC40NTUgMTExLjA0NiAxMTkgMTAwIDExOUM4OC4wMDAxIDExOSA4MCAxMTAuNDU1IDgwIDEwMFoiIGZpbGw9IiNDQ0NDQ0MiLz4KPHBhdGggZD0iTTEwMCAxMjVDMTEwLjQ1NSAxMjUgMTE5IDExNi40NTUgMTE5IDEwNkMxMTkgOTUuNTQ0NyAxMTAuNDU1IDg3IDEwMCA4N0M4OS41NDQ3IDg3IDgxIDk1LjU0NDcgODEgMTA2QzgxIDExNi40NTUgODkuNTQ0NyAxMjUgMTAwIDEyNVoiIGZpbGw9IiNGRkZGRkYiLz4KPC9zdmc+';
                     }}
                   />
                 ) : (
@@ -169,14 +158,14 @@ const ProductManagement = () => {
                 )}
                 <div className="product-overlay">
                   <div className="product-actions">
-                    <button 
+                    <button
                       onClick={() => handleEditProduct(product)}
                       className="edit-btn"
                       title="Modifier"
                     >
                       ✏️
                     </button>
-                    <button 
+                    <button
                       onClick={() => handleDeleteProduct(product._id)}
                       className="delete-btn"
                       title="Supprimer"
@@ -197,7 +186,7 @@ const ProductManagement = () => {
                   <span className="product-category">
                     {getCategoryIcon(product.category)} {product.category}
                   </span>
-                  <span 
+                  <span
                     className="product-condition"
                     style={{ color: getConditionColor(product.condition) }}
                   >
@@ -215,15 +204,16 @@ const ProductManagement = () => {
                 </div>
 
                 <p className="product-description">
-                  {product.description.length > 100 
-                    ? `${product.description.substring(0, 100)}...` 
-                    : product.description
-                  }
+                  {product.description.length > 100
+                    ? `${product.description.substring(0, 100)}...`
+                    : product.description}
                 </p>
 
                 <div className="product-images-count">
                   {product.images && product.images.length > 0 && (
-                    <span>📷 {product.images.length} image{product.images.length > 1 ? 's' : ''}</span>
+                    <span>
+                      📷 {product.images.length} image{product.images.length > 1 ? 's' : ''}
+                    </span>
                   )}
                 </div>
               </div>
@@ -235,4 +225,4 @@ const ProductManagement = () => {
   );
 };
 
-export default ProductManagement; 
+export default ProductManagement;

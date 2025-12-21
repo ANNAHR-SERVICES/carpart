@@ -1,98 +1,82 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { Toaster } from 'react-hot-toast';
-import { AuthProvider, useAuth } from './context/AuthContext';
-import SignIn from './components/SignIn';
-import SignUp from './components/SignUp';
-import { ClientDashboard, VendeurDashboard, AdminDashboard, ModerateurDashboard, SuperadminDashboard } from './pages/Dashboard';
-import ProductSearch from './components/ProductSearch';
-import './App.css';
+import React from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
+import { AuthProvider } from "./context/AuthContext";
 
-// Protected Route Component (unused but kept for future use)
-// eslint-disable-next-line no-unused-vars
-const ProtectedRoute = ({ children, allowedRoles = [] }) => {
-  const { user, loading } = useAuth();
-
-  if (loading) {
-    return <div className="loading">Loading...</div>;
-  }
-
-  if (!user) {
-    return <Navigate to="/signin" replace />;
-  }
-
-  if (allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
-    return <Navigate to="/unauthorized" replace />;
-  }
-
-  return children;
-};
-
-// Role-based Route Component
-const RoleRoute = ({ role, children }) => {
-  const { user } = useAuth();
-  
-  if (user && user.role === role) {
-    return children;
-  }
-  
-  return <Navigate to="/unauthorized" replace />;
-};
+import Accueil from "./components/Accueil";
+import VendorDashboard from "./components/VendorDashboard";
+import { AcheteurDashboard } from "./components/Dashboard";
+import Contact from "./components/Contact";
+import ProtectedRoute from "./components/ProtectedRoute";
+import SignIn from "./components/SignIn"; 
+import "./App.css";
 
 const AppRoutes = () => {
   return (
     <Routes>
-      <Route path="/signin" element={<SignIn />} />
-      <Route path="/signup" element={<SignUp />} />
-      
-      <Route 
-        path="/client/dashboard" 
+      <Route path="/" element={<Accueil />} />
+      <Route path="/signin" element={<SignIn />} /> 
+
+      <Route
+        path="/acheteur/dashboard"
         element={
-          <RoleRoute role="client">
-            <ClientDashboard />
-          </RoleRoute>
-        } 
+          <ProtectedRoute role="acheteur">
+            <AcheteurDashboard />
+          </ProtectedRoute>
+        }
       />
-      
-      <Route 
-        path="/vendeur/dashboard" 
+
+      <Route
+        path="/vendeur/dashboard"
         element={
-          <RoleRoute role="vendeur">
-            <VendeurDashboard />
-          </RoleRoute>
-        } 
+          <ProtectedRoute role="vendeur">
+            <VendorDashboard />
+          </ProtectedRoute>
+        }
       />
-      
-      <Route 
-        path="/admin/dashboard" 
+
+      <Route path="/contact" element={<Contact />} />
+      <Route path="/aide" element={<div className="aide-page">Centre d'aide</div>} />
+      <Route path="/mentions-legales" element={<div className="legal-page">Mentions légales</div>} />
+      <Route path="/confidentialite" element={<div className="privacy-page">Politique de confidentialité</div>} />
+      <Route path="/cgu" element={<div className="cgu-page">CGU</div>} />
+
+      <Route
+        path="/unauthorized"
         element={
-          <RoleRoute role="admin">
-            <AdminDashboard />
-          </RoleRoute>
-        } 
+          <div
+            className="unauthorized-page"
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              height: "100vh",
+              textAlign: "center",
+            }}
+          >
+            <h1>🚫 Accès refusé</h1>
+            <p>Vous n'avez pas la permission d'accéder à cette page.</p>
+
+            <button
+              onClick={() => (window.location.href = "/")}
+              style={{
+                padding: "10px 20px",
+                background: "#2563eb",
+                color: "#fff",
+                border: "none",
+                borderRadius: "8px",
+                cursor: "pointer",
+                marginTop: "20px",
+              }}
+            >
+              Retour à l'accueil
+            </button>
+          </div>
+        }
       />
-      
-      <Route 
-        path="/moderateur/dashboard" 
-        element={
-          <RoleRoute role="moderateur">
-            <ModerateurDashboard />
-          </RoleRoute>
-        } 
-      />
-      
-      <Route 
-        path="/superadmin/dashboard" 
-        element={
-          <RoleRoute role="superadmin">
-            <SuperadminDashboard />
-          </RoleRoute>
-        } 
-      />
-      
-      <Route path="/unauthorized" element={<div className="unauthorized">Access Denied</div>} />
-      <Route path="/products" element={<ProductSearch />} />
-      <Route path="/" element={<Navigate to="/signin" replace />} />
+
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 };
@@ -100,16 +84,22 @@ const AppRoutes = () => {
 function App() {
   return (
     <AuthProvider>
-      <Router>
+      <Router
+        future={{
+          v7_startTransition: true,
+          v7_relativeSplatPath: true,
+        }}
+      >
         <div className="App">
           <AppRoutes />
-          <Toaster 
+
+          <Toaster
             position="top-right"
             toastOptions={{
               duration: 4000,
               style: {
-                background: '#363636',
-                color: '#fff',
+                background: "#363636",
+                color: "#fff",
               },
             }}
           />
@@ -119,4 +109,4 @@ function App() {
   );
 }
 
-export default App; 
+export default App;

@@ -10,7 +10,8 @@ const {
   getProductById,
   updateProduct,
   deleteProduct,
-  getSellerProducts
+  getSellerProducts,
+  getPopularProducts // <-- ajouté
 } = require('../controllers/productController');
 
 // Validation pour la création/mise à jour de produit
@@ -58,6 +59,7 @@ const productValidation = [
 
 // Routes publiques
 router.get('/', getAllProducts);
+router.get('/popular', getPopularProducts); // <-- nouvelle route
 router.get('/:id', getProductById);
 
 // Routes protégées (nécessitent une authentification)
@@ -75,4 +77,4 @@ router.put('/:id', handleImageUpload, productValidation, updateProduct);
 // Supprimer un produit
 router.delete('/:id', deleteProduct);
 
-module.exports = router; 
+module.exports = router;

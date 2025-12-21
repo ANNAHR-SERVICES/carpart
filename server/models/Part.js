@@ -56,6 +56,12 @@ const partSchema = new mongoose.Schema({
         min: 0,
         default: 0
     },
+    // ✅ Champ ajouté pour suivre les ventes
+    soldCount: {
+        type: Number,
+        default: 0,
+        min: 0
+    }
 }, {
     timestamps: true
 });
